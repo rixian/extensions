@@ -11,7 +11,7 @@ namespace Rixian.Extensions.Errors
         /// <summary>
         /// The default result with no error.
         /// </summary>
-        public static readonly Result DefaultResult = Rixian.Extensions.Errors.Result.Default;
+        public static readonly Result DefaultResult = Errors.Result.Default;
 
         /// <summary>
         /// Creates a result with a value.
@@ -21,7 +21,7 @@ namespace Rixian.Extensions.Errors
         /// <returns>The result.</returns>
         public static Result<T> Result<T>(T item)
         {
-            return Rixian.Extensions.Errors.Result.New(item);
+            return Errors.Result.New(item);
         }
 
         /// <summary>
@@ -29,10 +29,10 @@ namespace Rixian.Extensions.Errors
         /// </summary>
         /// <typeparam name="T">The type of the value.</typeparam>
         /// <returns>The result.</returns>
-        public static Result<T> NullResult<T>()
+        public static Result<T?> NullResult<T>()
             where T : class
         {
-            return Rixian.Extensions.Errors.Result.Null<T>();
+            return Errors.Result.Null<T>();
         }
 
         /// <summary>
@@ -41,13 +41,13 @@ namespace Rixian.Extensions.Errors
         /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="innerError">The error.</param>
         /// <returns>The result.</returns>
-        public static Result<T> Error<T>(Error innerError) => Rixian.Extensions.Errors.Result.New<T>(innerError);
+        public static Result<T> Error<T>(Error innerError) => Errors.Result.New<T>(innerError);
 
         /// <summary>
         /// Creates a result with an error.
         /// </summary>
         /// <param name="innerError">The error.</param>
         /// <returns>The result.</returns>
-        public static Result Error(Error innerError) => Rixian.Extensions.Errors.Result.New(innerError);
+        public static Result Error(Error innerError) => Errors.Result.New(innerError);
     }
 }
