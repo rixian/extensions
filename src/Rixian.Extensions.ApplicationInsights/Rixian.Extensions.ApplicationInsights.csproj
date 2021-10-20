@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Utilities for code using Application Insights.</Description>
   </PropertyGroup>
 
   <ItemGroup>
