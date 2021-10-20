@@ -49,13 +49,13 @@ namespace Rixian.Extensions.Tokens
                                 if (tokenResult.IsSuccess)
                                 {
                                     this.token = tokenResult.Value;
-                                    this.expiration = this.token.Expiration.AddMinutes(-5); // Give ourselves a 5 minute buffer
+                                    this.expiration = this.token!.Expiration.AddMinutes(-5); // Give ourselves a 5 minute buffer
                                     lock (this.getTokenGate)
                                     {
                                         this.gettingTokenTask = null;
                                     }
 
-                                    return Result(this.token);
+                                    return Result(this.token!);
                                 }
                                 else
                                 {
