@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Description>Extensions for Asp.Net Core.</Description>
+    <Description>Extensions for Asp.Net Core to address cross-cutting concerns for web applications.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 

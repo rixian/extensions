@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Rixian.Extensions.Tokens</RootNamespace>
+    <Description>Abstractions for managing and generating tokens.</Description>
   </PropertyGroup>
 
   <ItemGroup>
