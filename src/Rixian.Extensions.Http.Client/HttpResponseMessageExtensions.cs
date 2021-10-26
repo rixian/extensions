@@ -5,6 +5,7 @@ namespace Rixian.Extensions.Http.Client
 {
     using System;
     using System.Net.Http;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -22,7 +23,7 @@ namespace Rixian.Extensions.Http.Client
         /// <typeparam name="T">The target type for deserialization.</typeparam>
         /// <param name="responseMessage">The HttpResponseMessage.</param>
         /// <returns>The deserialized content.</returns>
-        public static async Task<T> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage)
+        public static async Task<T?> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage)
         {
             if (responseMessage is null)
             {
@@ -36,7 +37,7 @@ namespace Rixian.Extensions.Http.Client
 
             var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            T result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+            T? result = JsonSerializer.Deserialize<T>(json);
             return result;
         }
 

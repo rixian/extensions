@@ -8,6 +8,7 @@ namespace Rixian.Extensions.Http.Client
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Text.Json;
 
     /// <summary>
     /// Extensions for working with multipart form content.
@@ -127,8 +128,7 @@ namespace Rixian.Extensions.Http.Client
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(content);
-
+            var json = JsonSerializer.Serialize(content);
             return builder.WithString(name, json, encoding, "application/json");
         }
 
