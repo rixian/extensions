@@ -15,6 +15,7 @@ env:
   BUILDCONFIGURATION: Release
   codecov_token: ${{ secrets.CODECOV_TOKEN }}
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
   build:
