@@ -52,7 +52,7 @@ $Variables.GetEnumerator() |% {
         Write-Host "##vso[task.setvariable variable=$($_.Key);]$($_.Value)"
     }
     if ($env:GITHUB_ACTIONS) {
-        Add-Content -Path $env:GITHUB_ENV -Value "$($_.Key)=$($_.Value)"
+        Add-Content -Path $env:GITHUB_ENV -Value "$($_.Key)=$($_.Value)" -Encoding utf8
     }
 
     if ($cmdInstructions) {
@@ -79,7 +79,7 @@ if ($PrependPath) {
             Write-Host "##vso[task.prependpath]$_"
         }
         if ($env:GITHUB_ACTIONS) {
-            Add-Content -Path $env:GITHUB_PATH -Value $_
+            Add-Content -Path $env:GITHUB_PATH -Value $_ -Encoding utf8
         }
 
         $CmdEnvScript += "SET PATH=$_$pathDelimiter%PATH%"
