@@ -9,6 +9,8 @@ namespace Rixian.Extensions.Http.Client
     using System.Net.Http.Headers;
     using System.Net.Mime;
     using System.Text;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     /// <summary>
     /// Extensions for building HttpRequestMessages.
@@ -221,7 +223,7 @@ namespace Rixian.Extensions.Http.Client
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(body);
+            var json = JsonSerializer.Serialize(body);
             builder.WithContent(new StringContent(json, Encoding.UTF8, ApplicationJsonContentType));
 
             return builder;

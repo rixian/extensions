@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Rixian.Extensions.Errors\Rixian.Extensions.Errors.csproj" />
     <ProjectReference Include="..\Rixian.Extensions.Http\Rixian.Extensions.Http.csproj" />
   </ItemGroup>
