@@ -137,7 +137,7 @@ namespace Rixian.Extensions.Caching
 
                     if (newValue.IsSuccess && newValue.Value is { })
                     {
-                        await this.SetAsync(key, newValue, cacheOptions, cancellationToken).ConfigureAwait(false);
+                        await this.SetAsync(key, newValue.Value, cacheOptions, cancellationToken).ConfigureAwait(false);
                         activity?.AddEvent(new ActivityEvent("cache:set_cache_with_current_value"));
                     }
 
