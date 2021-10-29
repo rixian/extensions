@@ -5,6 +5,7 @@ namespace Rixian.Extensions.Http.Client
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Net.Mime;
@@ -279,6 +280,41 @@ namespace Rixian.Extensions.Http.Client
             }
 
             builder.WithContent(new FormUrlEncodedContent(content));
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Sets 'traceparent' and 'tracestate' headers, and optionally the 'baggage' header.
+        /// </summary>
+        /// <param name="builder">The IHttpRequestBuilder instance.</param>
+        /// <param name="includeBaggage">Indicates if the Baggage property should be included on the HTTP request.</param>
+        /// <returns>The updated IHttpRequestBuilder instance.</returns>
+        public static IHttpRequestMessageBuilder WithTracing(this IHttpRequestMessageBuilder builder, bool includeBaggage = true)
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            System.Diagnostics.Activity? current = System.Diagnostics.Activity.Current;
+            if (current is object)
+            {
+                if (string.IsNullOrEmpty(current!.Id) == false)
+                {
+                    builder.WithHeader("traceparent", current!.Id!);
+                    if (string.IsNullOrEmpty(current!.TraceStateString) == false)
+                    {
+                        builder.WithHeader("tracestate", current!.TraceStateString!);
+                    }
+                }
+
+                if (includeBaggage && current.Baggage is object && current.Baggage.Any())
+                {
+                    var headerValue = string.Join(",", current.Baggage.Select(b => $"{b.Key}={System.Net.WebUtility.UrlEncode(b.Value)}"));
+                    builder.WithHeader("baggage", headerValue);
+                }
+            }
 
             return builder;
         }
