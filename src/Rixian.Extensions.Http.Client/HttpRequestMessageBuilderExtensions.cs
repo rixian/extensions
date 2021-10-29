@@ -223,7 +223,26 @@ namespace Rixian.Extensions.Http.Client
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            var json = JsonSerializer.Serialize(body);
+            builder.WithContentJson(body, null);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Sets the request content with a JSON serialized value.
+        /// </summary>
+        /// <param name="builder">The IHttpRequestBuilder instance.</param>
+        /// <param name="body">The value to JSON serialize.</param>
+        /// <param name="options">The serializer options.</param>
+        /// <returns>The updated IHttpRequestBuilder instance.</returns>
+        public static IHttpRequestMessageBuilder WithContentJson(this IHttpRequestMessageBuilder builder, object body, JsonSerializerOptions? options)
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            var json = JsonSerializer.Serialize(body, options);
             builder.WithContent(new StringContent(json, Encoding.UTF8, ApplicationJsonContentType));
 
             return builder;

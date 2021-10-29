@@ -25,6 +25,18 @@ namespace Rixian.Extensions.Http.Client
         /// <returns>The deserialized content.</returns>
         public static async Task<T?> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage)
         {
+            return await responseMessage.DeserializeJsonContentAsync<T>(options: null);
+        }
+
+        /// <summary>
+        /// Deserializes the response content as JSON into an object.
+        /// </summary>
+        /// <typeparam name="T">The target type for deserialization.</typeparam>
+        /// <param name="responseMessage">The HttpResponseMessage.</param>
+        /// <param name="options">The serializer options.</param>
+        /// <returns>The deserialized content.</returns>
+        public static async Task<T?> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage, JsonSerializerOptions? options)
+        {
             if (responseMessage is null)
             {
                 throw new ArgumentNullException(nameof(responseMessage));
@@ -37,7 +49,7 @@ namespace Rixian.Extensions.Http.Client
 
             var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            T? result = JsonSerializer.Deserialize<T>(json);
+            T? result = JsonSerializer.Deserialize<T>(json, options);
             return result;
         }
 
