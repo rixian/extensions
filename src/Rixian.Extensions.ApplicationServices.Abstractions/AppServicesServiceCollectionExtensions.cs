@@ -45,7 +45,7 @@ namespace Rixian.Extensions.DependencyInjection
             services.TryAddSingleton<IStateStorageProviderFactory>(svc => svc.GetRequiredService<StateStorageProviderFactory>());
             services.TryAddSingleton<IFactory<StateStorageProviderOptions, IStateStorageProvider>>(svc => svc.GetRequiredService<StateStorageProviderFactory>());
             services.ConfigureFactory<StateStorageProviderOptions, IStateStorageProvider>((svc, o) => createDefaultStateStore.Invoke(svc, o));
-            services.AddTransient<IStateStorageProvider>(svc => svc.GetRequiredService<IStateStorageProviderFactory>().GetStateStorageProvider("appScoped").Value);
+            services.AddTransient<IStateStorageProvider>(svc => svc.GetRequiredService<IStateStorageProviderFactory>().GetStateStorageProvider("appScoped").Value!);
 
             return services;
         }
@@ -70,7 +70,7 @@ namespace Rixian.Extensions.DependencyInjection
             services.TryAddSingleton<IPubSubProviderFactory>(svc => svc.GetRequiredService<PubSubProviderFactory>());
             services.TryAddSingleton<IFactory<PubSubProviderOptions, IPubSubProvider>>(svc => svc.GetRequiredService<PubSubProviderFactory>());
             services.ConfigureFactory<PubSubProviderOptions, IPubSubProvider>((svc, o) => createDefaultPubSub.Invoke(svc, o));
-            services.AddTransient<IPubSubProvider>(svc => svc.GetRequiredService<IPubSubProviderFactory>().GetPubSubProvider(pubsubName).Value);
+            services.AddTransient<IPubSubProvider>(svc => svc.GetRequiredService<IPubSubProviderFactory>().GetPubSubProvider(pubsubName).Value!);
 
             return services;
         }

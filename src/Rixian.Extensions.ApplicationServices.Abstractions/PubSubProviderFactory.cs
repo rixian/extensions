@@ -10,7 +10,6 @@ namespace Rixian.Extensions.ApplicationServices.Dapr
     using Rixian.Extensions.Errors;
     using static Rixian.Extensions.Errors.Prelude;
 
-
     /// <summary>
     /// Factory used for creating instances of an ITokenClient.
     /// </summary>
