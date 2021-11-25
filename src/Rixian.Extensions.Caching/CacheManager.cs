@@ -12,13 +12,14 @@ namespace Rixian.Extensions.Caching
     using Microsoft.Extensions.Caching.Distributed;
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Options;
+    using Rixian.Extensions.ApplicationServices.Abstractions;
     using Rixian.Extensions.Errors;
     using static Rixian.Extensions.Errors.Prelude;
 
     /// <summary>
     /// Manages activities against the cache.
     /// </summary>
-    public class CacheManager
+    public class CacheManager : ICacheProvider
     {
         /// <summary>
         /// The error code used in the event of a cache miss.
@@ -47,19 +48,10 @@ namespace Rixian.Extensions.Caching
             this.options = options;
         }
 
-        /// <summary>
-        /// Removes the cache value with the given key.
-        /// </summary>
-        /// <param name="key">The cache key.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public Task RemoveAsync(string key) => this.RemoveAsync(key, default);
 
-        /// <summary>
-        /// Removes the cache value with the given key.
-        /// </summary>
-        /// <param name="key">The cache key.</param>
-        /// <param name="cancellationToken">The System.Threading.CancellationToken used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public async Task RemoveAsync(string key, CancellationToken cancellationToken)
         {
             using Activity? activity = InternalUtil.ActivitySource.StartActivity("cache:remove");
@@ -69,19 +61,10 @@ namespace Rixian.Extensions.Caching
             await this.distributedCache.RemoveAsync(key, cancellationToken);
         }
 
-        /// <summary>
-        /// Refreshes the distributed cache value with the given key.
-        /// </summary>
-        /// <param name="key">The cache key.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public Task RefreshAsync(string key) => this.RefreshAsync(key, default);
 
-        /// <summary>
-        /// Refreshes the distributed cache value with the given key.
-        /// </summary>
-        /// <param name="key">The cache key.</param>
-        /// <param name="cancellationToken">The System.Threading.CancellationToken used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public async Task RefreshAsync(string key, CancellationToken cancellationToken)
         {
             using Activity? activity = InternalUtil.ActivitySource.StartActivity("cache:refresh");
@@ -90,27 +73,10 @@ namespace Rixian.Extensions.Caching
             await this.distributedCache.RefreshAsync(key, cancellationToken);
         }
 
-        /// <summary>
-        /// Gets the value from the cache or sets it if no value exists.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <param name="cacheOptions">The cache options to use.</param>
-        /// <param name="getValueAsync">Delegate to fetch the value to be cached in the event of a cache miss.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Throws if the getValueAsync delegate is null.</exception>
+        /// <inheritdoc/>
         public Task<Result<T>> GetOrSetAsync<T>(string key, EntityCacheOptions cacheOptions, Func<CancellationToken, Task<Result<T>>> getValueAsync) => this.GetOrSetAsync(key, cacheOptions, getValueAsync, default);
 
-        /// <summary>
-        /// Gets the value from the cache or sets it if no value exists.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <param name="cacheOptions">The cache options to use.</param>
-        /// <param name="getValueAsync">Delegate to fetch the value to be cached in the event of a cache miss.</param>
-        /// <param name="cancellationToken">The System.Threading.CancellationToken used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Throws if the getValueAsync delegate is null.</exception>
+        /// <inheritdoc/>
         public async Task<Result<T>> GetOrSetAsync<T>(string key, EntityCacheOptions cacheOptions, Func<CancellationToken, Task<Result<T>>> getValueAsync, CancellationToken cancellationToken)
         {
             using Activity? activity = InternalUtil.ActivitySource.StartActivity("cache:getorset");
@@ -150,21 +116,10 @@ namespace Rixian.Extensions.Caching
             }
         }
 
-        /// <summary>
-        /// Gets the value from the cache, otherwise returns an error.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public Task<Result<T>> GetAsync<T>(string key) => this.GetAsync<T>(key, default);
 
-        /// <summary>
-        /// Gets the value from the cache, otherwise returns an error.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <param name="cancellationToken">The System.Threading.CancellationToken used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public async Task<Result<T>> GetAsync<T>(string key, CancellationToken cancellationToken)
         {
             using Activity? activity = InternalUtil.ActivitySource.StartActivity("cache:get");
@@ -204,34 +159,13 @@ namespace Rixian.Extensions.Caching
             }
         }
 
-        /// <summary>
-        /// Sets the value in the cache.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <param name="value">The value to store in the cache.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public Task SetAsync<T>(string key, T value) => this.SetAsync<T>(key, value, default, default);
 
-        /// <summary>
-        /// Sets the value in the cache.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <param name="value">The value to store in the cache.</param>
-        /// <param name="options">The cache options to use.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public Task SetAsync<T>(string key, T value, EntityCacheOptions options) => this.SetAsync<T>(key, value, options, default);
 
-        /// <summary>
-        /// Sets the value in the cache.
-        /// </summary>
-        /// <typeparam name="T">The object type to cache.</typeparam>
-        /// <param name="key">The cache key.</param>
-        /// <param name="value">The value to store in the cache.</param>
-        /// <param name="options">The cache options to use.</param>
-        /// <param name="cancellationToken">The System.Threading.CancellationToken used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        /// <inheritdoc/>
         public async Task SetAsync<T>(string key, T value, EntityCacheOptions? options, CancellationToken cancellationToken)
         {
             using Activity? activity = InternalUtil.ActivitySource.StartActivity("cache:set");
