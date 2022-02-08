@@ -26,12 +26,24 @@ namespace Rixian.Extensions.DependencyInjection
         public static IServiceCollection AddRixianApplicationServices(this IServiceCollection services, DaprClient dapr, string pubsubName, string globalStorageName, string sharedStorageName, string appScopedStorageName)
         {
             services.TryAddSingleton(dapr);
-            services.AddStateStorage<DefaultStateStorageProvider>(globalStorageName, sharedStorageName, appScopedStorageName, (svc, o) => new DefaultStateStorageProvider(svc.GetRequiredService<DaprClient>(), o!));
-            services.AddPubSub<DefaultPubSubProvider>(pubsubName, (svc, o) => new DefaultPubSubProvider(svc.GetRequiredService<DaprClient>(), o!));
+            return services.AddRixianApplicationServices(pubsubName, globalStorageName, sharedStorageName, appScopedStorageName);
+        }
 
-            services.AddManagedCaching();
-
-            return services;
+        /// <summary>
+        /// Registers dependencies with the IServiceCollection instance.
+        /// </summary>
+        /// <param name="services">The IServiceCollection instance to use.</param>
+        /// <param name="pubsubName">The Dapr name of the pubsub service.</param>
+        /// <param name="globalStorageName">The Dapr name for the global state store.</param>
+        /// <param name="sharedStorageName">The Dapr name for the shared state store.</param>
+        /// <param name="appScopedStorageName">The Dapr name for the application scoped state store.</param>
+        /// <returns>The updated IServiceCollection instance.</returns>
+        public static IServiceCollection AddRixianApplicationServices(this IServiceCollection services, string pubsubName, string globalStorageName, string sharedStorageName, string appScopedStorageName)
+        {
+            return services
+                .AddStateStorage(globalStorageName, sharedStorageName, appScopedStorageName, (svc, o) => new DefaultStateStorageProvider(svc.GetRequiredService<DaprClient>(), o!))
+                .AddPubSub(pubsubName, (svc, o) => new DefaultPubSubProvider(svc.GetRequiredService<DaprClient>(), o!))
+                .AddManagedCaching();
         }
     }
 }
