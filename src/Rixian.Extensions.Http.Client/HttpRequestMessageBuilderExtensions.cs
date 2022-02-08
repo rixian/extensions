@@ -194,6 +194,16 @@ namespace Rixian.Extensions.Http.Client
             builder.WithAuthorization("Bearer", token);
 
         /// <summary>
+        /// Sets the Authorization header with a scheme of 'Basic' and encodes the username and password according to RFC7617: https://datatracker.ietf.org/doc/html/rfc7617.
+        /// </summary>
+        /// <param name="builder">The IHttpRequestBuilder instance.</param>
+        /// <param name="username">The username for basic HTTP auth.</param>
+        /// <param name="password">The password for basic HTTP auth.</param>
+        /// <returns>The updated IHttpRequestBuilder instance.</returns>
+        public static IHttpRequestMessageBuilder WithAuthorizationBasic(this IHttpRequestMessageBuilder builder, string username, string password) =>
+            builder.WithAuthorization("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
+
+        /// <summary>
         /// Sets the request content.
         /// </summary>
         /// <param name="builder">The IHttpRequestBuilder instance.</param>
@@ -270,7 +280,7 @@ namespace Rixian.Extensions.Http.Client
         /// Sets the request content with a form url encoded value.
         /// </summary>
         /// <param name="builder">The IHttpRequestBuilder instance.</param>
-        /// <param name="content">The values for form url encode.</param>
+        /// <param name="content">The values for form url encoding.</param>
         /// <returns>The updated IHttpRequestBuilder instance.</returns>
         public static IHttpRequestMessageBuilder WithFormUrlEncodedContent(this IHttpRequestMessageBuilder builder, IEnumerable<KeyValuePair<string, string>> content)
         {
@@ -286,6 +296,7 @@ namespace Rixian.Extensions.Http.Client
 
         /// <summary>
         /// Sets 'traceparent' and 'tracestate' headers, and optionally the 'baggage' header.
+        /// This should typically only be used with internal endpoints.
         /// </summary>
         /// <param name="builder">The IHttpRequestBuilder instance.</param>
         /// <param name="includeBaggage">Indicates if the Baggage property should be included on the HTTP request.</param>

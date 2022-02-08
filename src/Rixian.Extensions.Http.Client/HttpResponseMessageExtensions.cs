@@ -44,7 +44,7 @@ namespace Rixian.Extensions.Http.Client
 
             if (responseMessage.Content == null)
             {
-                return default!; // Can't make this work. See: https://stackoverflow.com/a/58799431
+                return default; // Can't make this work. See: https://stackoverflow.com/a/58799431
             }
 
             var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);

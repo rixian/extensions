@@ -24,7 +24,7 @@ namespace Rixian.Extensions.Http.Client
         /// <summary>
         /// Gets the query parameters of the url.
         /// </summary>
-        ICollection<KeyValuePair<string, string>> QueryParams { get; }
+        ICollection<KeyValuePair<string, string?>> QueryParams { get; }
 
         /// <summary>
         /// Gets the currently represented Uri.

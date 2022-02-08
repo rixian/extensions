@@ -45,7 +45,7 @@ namespace Rixian.Extensions.Http.Client
             }
 
             /// <inheritdoc/>
-            public ICollection<KeyValuePair<string, string>> QueryParams { get; } = new List<KeyValuePair<string, string>>();
+            public ICollection<KeyValuePair<string, string?>> QueryParams { get; } = new List<KeyValuePair<string, string?>>();
 
             /// <inheritdoc/>
             public string Path { get; set; }
