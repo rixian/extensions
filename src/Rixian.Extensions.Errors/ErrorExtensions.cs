@@ -9,34 +9,14 @@ namespace Rixian.Extensions.Errors
     public static class ErrorExtensions
     {
         /// <summary>
-        /// Turns the error into a result.
+        /// Converts a failed result to different type.
         /// </summary>
-        /// <typeparam name="T">The result type.</typeparam>
-        /// <param name="innerError">The error.</param>
-        /// <returns>The result.</returns>
-        public static Result<T> ToResult<T>(this Error innerError)
+        /// <typeparam name="T">The new type of the result.</typeparam>
+        /// <param name="result">The result.</param>
+        /// <returns>The new result.</returns>
+        public static Result<T> Cast<T>(this Result result)
         {
-            return Result.New<T>(innerError);
-        }
-
-        /// <summary>
-        /// Turns the error into a result.
-        /// </summary>
-        /// <param name="innerError">The error.</param>
-        /// <returns>The result.</returns>
-        public static Result ToResult(this Error innerError)
-        {
-            return Result.New(innerError);
-        }
-
-        /// <summary>
-        /// Creates an <see cref="ErrorResponse"/> from this Error.
-        /// </summary>
-        /// <param name="error">The error.</param>
-        /// <returns>The <see cref="ErrorResponse"/>.</returns>
-        public static ErrorResponse ToResponse(this Error error)
-        {
-            return new ErrorResponse(error);
+            return (Result<T>)result;
         }
 
         /// <summary>
@@ -55,14 +35,34 @@ namespace Rixian.Extensions.Errors
         }
 
         /// <summary>
-        /// Converts a failed result to different type.
+        /// Creates an <see cref="ErrorResponse"/> from this Error.
         /// </summary>
-        /// <typeparam name="T">The new type of the result.</typeparam>
-        /// <param name="result">The result.</param>
-        /// <returns>The new result.</returns>
-        public static Result<T> Cast<T>(this Result result)
+        /// <param name="error">The error.</param>
+        /// <returns>The <see cref="ErrorResponse"/>.</returns>
+        public static ErrorResponse ToResponse(this Error error)
         {
-            return (Result<T>)result;
+            return new ErrorResponse(error);
+        }
+
+        /// <summary>
+        /// Turns the error into a result.
+        /// </summary>
+        /// <typeparam name="T">The result type.</typeparam>
+        /// <param name="innerError">The error.</param>
+        /// <returns>The result.</returns>
+        public static Result<T> ToResult<T>(this Error innerError)
+        {
+            return Result.New<T>(innerError);
+        }
+
+        /// <summary>
+        /// Turns the error into a result.
+        /// </summary>
+        /// <param name="innerError">The error.</param>
+        /// <returns>The result.</returns>
+        public static Result ToResult(this Error innerError)
+        {
+            return Result.New(innerError);
         }
     }
 }

@@ -35,9 +35,46 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Extensions.AspNetCor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Extensions.AspNetCore.DataProtection", "src\Rixian.Extensions.AspNetCore.DataProtection\Rixian.Extensions.AspNetCore.DataProtection.csproj", "{A8CD853E-BFFD-498C-9F34-530F0B1667A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rixian.Extensions.ApplicationServices.Abstractions", "src\Rixian.Extensions.ApplicationServices.Abstractions\Rixian.Extensions.ApplicationServices.Abstractions.csproj", "{E1476DEB-A17A-46C4-B4C8-567586292393}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Extensions.ApplicationServices.Abstractions", "src\Rixian.Extensions.ApplicationServices.Abstractions\Rixian.Extensions.ApplicationServices.Abstractions.csproj", "{E1476DEB-A17A-46C4-B4C8-567586292393}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rixian.Extensions.ApplicationServices.Dapr", "src\Rixian.Extensions.ApplicationServices.Dapr\Rixian.Extensions.ApplicationServices.Dapr.csproj", "{6F1C4B6B-C572-465C-B161-42FBE1EA38BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Extensions.ApplicationServices.Dapr", "src\Rixian.Extensions.ApplicationServices.Dapr\Rixian.Extensions.ApplicationServices.Dapr.csproj", "{6F1C4B6B-C572-465C-B161-42FBE1EA38BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CCB7D418-5E29-43E8-92CE-3B9DFF8F8CCE}"
+	ProjectSection(SolutionItems) = preProject
+		test\.editorconfig = test\.editorconfig
+		test\Directory.Build.props = test\Directory.Build.props
+		test\Directory.Build.targets = test\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rixian.Extensions.Errors.Tests", "test\Rixian.Extensions.Errors.Tests\Rixian.Extensions.Errors.Tests.csproj", "{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D40E1178-37B4-45EE-AF92-A1D16819D634}"
+	ProjectSection(SolutionItems) = preProject
+		src\.editorconfig = src\.editorconfig
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_sln", "_sln", "{04A01E66-9C89-4C74-8110-2A001CF9746C}"
+	ProjectSection(SolutionItems) = preProject
+		.codacy.yaml = .codacy.yaml
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.rsp = Directory.Build.rsp
+		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
+		icon.png = icon.png
+		init.cmd = init.cmd
+		init.ps1 = init.ps1
+		LICENSE = LICENSE
+		nuget.config = nuget.config
+		README.md = README.md
+		stylecop.json = stylecop.json
+		version.json = version.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -265,9 +302,42 @@ Global
 		{6F1C4B6B-C572-465C-B161-42FBE1EA38BC}.Release|x64.Build.0 = Release|Any CPU
 		{6F1C4B6B-C572-465C-B161-42FBE1EA38BC}.Release|x86.ActiveCfg = Release|Any CPU
 		{6F1C4B6B-C572-465C-B161-42FBE1EA38BC}.Release|x86.Build.0 = Release|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Debug|x64.Build.0 = Debug|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Debug|x86.Build.0 = Debug|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Release|x64.ActiveCfg = Release|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Release|x64.Build.0 = Release|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Release|x86.ActiveCfg = Release|Any CPU
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{48AF861F-1D4A-4B42-A6EF-B7B516EC72B3} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{B535A5B4-1CD8-46C8-B5EF-AFB2DB4F52EC} = {CCB7D418-5E29-43E8-92CE-3B9DFF8F8CCE}
+		{B97694C2-5888-4290-B200-8E53379B0CB9} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{0B06DC78-EAEA-419B-819E-B37B7D64F1FA} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{80FA55EA-C6B1-48D3-B335-7B797A792491} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{D062B8A3-9811-484D-AC0D-55D4D5450BC9} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{4FDF9FC6-3051-4D76-BE97-97C2A82F42EF} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{84E79C49-62E9-479F-817B-1D6FEFF6D984} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{677493AF-718B-459C-85BE-97DDC698FA0B} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{CEE66BBB-8FC7-4238-AA03-62E82FB5E0B0} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{3813ECFE-9B09-47ED-8D71-40DE378B719C} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{7E1F4F17-CAAF-4DA1-87DE-DA340CFE7798} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{6C184BA8-885D-4C96-AB51-E284CB9DB050} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{DF148628-8836-4DA4-84AB-A7AEECF84AB0} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{2BA8F3F5-193B-451B-9695-1A775541C3E1} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{A8CD853E-BFFD-498C-9F34-530F0B1667A9} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{E1476DEB-A17A-46C4-B4C8-567586292393} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{6F1C4B6B-C572-465C-B161-42FBE1EA38BC} = {D40E1178-37B4-45EE-AF92-A1D16819D634}
+		{BDFA57DB-2BF7-4C1B-B529-DB0618D00A36} = {CCB7D418-5E29-43E8-92CE-3B9DFF8F8CCE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0CCD70C9-1A72-4AFF-B523-E8CE18D7AFA6}
