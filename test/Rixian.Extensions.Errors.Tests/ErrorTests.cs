@@ -84,7 +84,7 @@ namespace Rixian.Extensions.Caching.Tests
         /// <summary>
         /// Errors for use in unit tests.
         /// </summary>
-        public class TestErrors
+        public static class TestErrors
         {
             public static readonly Error ContactInfoError = new Error
             {

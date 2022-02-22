@@ -1,4 +1,4 @@
-﻿// Copyright (c) Rixian. All rights reserved.
+// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
 namespace Rixian.Extensions.Dapr
@@ -11,16 +11,17 @@ namespace Rixian.Extensions.Dapr
     /// <summary>
     /// Helper methods for using Dapr.
     /// </summary>
-    public class DaprHelper
+    public static class DaprHelper
     {
-        private static string DaprPort => Environment.GetEnvironmentVariable("DAPR_GRPC_PORT") ?? "50001";
-
         private static string DaprHostIp => Environment.GetEnvironmentVariable("DAPR_HOST_IP") ?? "127.0.0.1";
+
+        private static string DaprPort => Environment.GetEnvironmentVariable("DAPR_GRPC_PORT") ?? "50001";
 
         /// <summary>
         /// Blocking call that waits for Dapr to be available. Should be used when relying on Dapr secrets to bootstrap IConfiguration.
         /// </summary>
         /// <param name="retryCount">The number of times to retry connecting to Dapr.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0030:Do not used banned APIs", Justification = "Console is used because this method is typically called before logging is loaded.")]
         public static void WaitForDapr(int retryCount = 3)
         {
             try
