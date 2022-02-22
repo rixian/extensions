@@ -4,10 +4,12 @@
 namespace Rixian.Extensions.Http.Client
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Text.Json;
 
     /// <summary>
     /// Extensions for working with multipart form content.
@@ -36,6 +38,28 @@ namespace Rixian.Extensions.Http.Client
 
             content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
             builder.Content.Add(content, name, fileName);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds form URL encoded content to the multipart form content on the request.
+        /// </summary>
+        /// <param name="builder">The IMultipartFormContentBuilder instance.</param>
+        /// <param name="formValues">The form values to use for the request body.</param>
+        /// <returns>The updated IMultipartFormContentBuilder instance.</returns>
+        public static IMultipartFormContentBuilder WithFormValues(this IMultipartFormContentBuilder builder, IEnumerable<KeyValuePair<string, string>> formValues)
+        {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            var content = new FormUrlEncodedContent(formValues);
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
+            builder.Content.Add(content);
 
             return builder;
         }
@@ -127,8 +151,7 @@ namespace Rixian.Extensions.Http.Client
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(content);
-
+            var json = JsonSerializer.Serialize(content);
             return builder.WithString(name, json, encoding, "application/json");
         }
 

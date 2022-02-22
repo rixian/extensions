@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Description>Provides Dapr-specific service abstractions for use in your application.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rixian.Extensions.ApplicationServices.Abstractions\Rixian.Extensions.ApplicationServices.Abstractions.csproj" />
+    <ProjectReference Include="..\Rixian.Extensions.Caching\Rixian.Extensions.Caching.csproj" />
+    <ProjectReference Include="..\Rixian.Extensions.Dapr\Rixian.Extensions.Dapr.csproj" />
+    <ProjectReference Include="..\Rixian.Extensions.DependencyInjection\Rixian.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

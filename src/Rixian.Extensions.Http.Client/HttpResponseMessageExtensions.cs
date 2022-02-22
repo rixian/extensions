@@ -5,6 +5,7 @@ namespace Rixian.Extensions.Http.Client
 {
     using System;
     using System.Net.Http;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -22,7 +23,19 @@ namespace Rixian.Extensions.Http.Client
         /// <typeparam name="T">The target type for deserialization.</typeparam>
         /// <param name="responseMessage">The HttpResponseMessage.</param>
         /// <returns>The deserialized content.</returns>
-        public static async Task<T> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage)
+        public static async Task<T?> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage)
+        {
+            return await responseMessage.DeserializeJsonContentAsync<T>(options: null);
+        }
+
+        /// <summary>
+        /// Deserializes the response content as JSON into an object.
+        /// </summary>
+        /// <typeparam name="T">The target type for deserialization.</typeparam>
+        /// <param name="responseMessage">The HttpResponseMessage.</param>
+        /// <param name="options">The serializer options.</param>
+        /// <returns>The deserialized content.</returns>
+        public static async Task<T?> DeserializeJsonContentAsync<T>(this HttpResponseMessage responseMessage, JsonSerializerOptions? options)
         {
             if (responseMessage is null)
             {
@@ -31,12 +44,12 @@ namespace Rixian.Extensions.Http.Client
 
             if (responseMessage.Content == null)
             {
-                return default!; // Can't make this work. See: https://stackoverflow.com/a/58799431
+                return default; // Can't make this work. See: https://stackoverflow.com/a/58799431
             }
 
             var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            T result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+            T? result = JsonSerializer.Deserialize<T>(json, options);
             return result;
         }
 

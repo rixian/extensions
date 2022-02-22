@@ -4,6 +4,7 @@
 namespace Rixian.Extensions.DependencyInjection
 {
     using Microsoft.Extensions.DependencyInjection;
+    using Rixian.Extensions.ApplicationServices.Abstractions;
     using Rixian.Extensions.Caching;
 
     /// <summary>
@@ -36,6 +37,7 @@ namespace Rixian.Extensions.DependencyInjection
                 o.SerializerOptions = cacheManagerOptions?.SerializerOptions;
             });
             services.AddTransient<CacheManager>();
+            services.AddTransient<ICacheProvider, CacheManager>();
 
             return services;
         }

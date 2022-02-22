@@ -22,7 +22,7 @@ namespace Rixian.Extensions.Http.Client
         /// <param name="token">The token to replace in the path.</param>
         /// <param name="value">The replacement value.</param>
         /// <returns>The updated IUrlBuilder.</returns>
-        public static IUrlBuilder ReplaceToken(this IUrlBuilder urlBuilder, string token, object value)
+        public static IUrlBuilder ReplaceToken(this IUrlBuilder urlBuilder, string token, object? value)
         {
             if (urlBuilder is null)
             {
@@ -47,7 +47,7 @@ namespace Rixian.Extensions.Http.Client
         /// <param name="value">The query parameter value.</param>
         /// <param name="ignoreIfNull">Ignores this query parameter if the value is null.</param>
         /// <returns>The updated IUrlBuilder.</returns>
-        public static IUrlBuilder SetQueryParam(this IUrlBuilder urlBuilder, string key, object value, bool ignoreIfNull = true)
+        public static IUrlBuilder SetQueryParam(this IUrlBuilder urlBuilder, string key, object? value, bool ignoreIfNull = true)
         {
             if (urlBuilder is null)
             {
@@ -63,9 +63,14 @@ namespace Rixian.Extensions.Http.Client
             {
                 return urlBuilder;
             }
+            else if (value is null)
+            {
+                urlBuilder.QueryParams.Add(new KeyValuePair<string, string?>(key, null)); // Checked with 'is null'
+                return urlBuilder;
+            }
             else
             {
-                urlBuilder.QueryParams.Add(new KeyValuePair<string, string>(key, Uri.EscapeDataString(ConvertToString(value!, CultureInfo.InvariantCulture)))); // Checked with 'is null'
+                urlBuilder.QueryParams.Add(new KeyValuePair<string, string?>(key, Uri.EscapeDataString(ConvertToString(value, CultureInfo.InvariantCulture)))); // Checked with 'is null'
                 return urlBuilder;
             }
         }
@@ -97,20 +102,25 @@ namespace Rixian.Extensions.Http.Client
                 throw new ArgumentNullException(nameof(urlBuilder));
             }
 
-            ICollection<KeyValuePair<string, string>> queryParams = urlBuilder.QueryParams;
+            ICollection<KeyValuePair<string, string?>> queryParams = urlBuilder.QueryParams;
             if (queryParams.Count == 0)
             {
                 return string.Empty;
             }
 
-            var values = queryParams.Select(p => $"{p.Key}={p.Value}").ToArray();
+            var values = queryParams.Select(p => p.Value is null ? p.Key : $"{p.Key}={p.Value}").ToArray();
             return "?" + string.Join("&", values);
         }
 
-        private static string ConvertToString(object value) => ConvertToString(value, CultureInfo.InvariantCulture);
+        private static string ConvertToString(object? value) => ConvertToString(value, CultureInfo.InvariantCulture);
 
-        private static string ConvertToString(object value, CultureInfo cultureInfo)
+        private static string ConvertToString(object? value, CultureInfo cultureInfo)
         {
+            if (value is null)
+            {
+                return string.Empty;
+            }
+
             switch (value)
             {
                 case Enum e when value is Enum:

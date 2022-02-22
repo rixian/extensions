@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Provides various service abstractions for use in your application.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rixian.Extensions.DependencyInjection\Rixian.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Rixian.Extensions.Errors\Rixian.Extensions.Errors.csproj" />
+  </ItemGroup>
+
+</Project>
