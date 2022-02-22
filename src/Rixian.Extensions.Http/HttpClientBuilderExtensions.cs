@@ -147,8 +147,7 @@ public static class HttpClientBuilderExtensions
                 throw new HttpClientConfigurationException(string.Format(CultureInfo.InvariantCulture, "No ITokenClient registered with the name '{0}'.", tokenClientName));
             }
 
-            var handler = new TokenClientDelegatingHandler(tokenClient.Value!, svc.GetRequiredService<ILogger<TokenClientDelegatingHandler>>());
-            return handler;
+            return new TokenClientDelegatingHandler(tokenClient.Value!, svc.GetRequiredService<ILogger<TokenClientDelegatingHandler>>());
         });
     }
 

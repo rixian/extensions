@@ -31,13 +31,10 @@ internal class StateStorageProviderFactory : GenericFactory<StateStorageProvider
     {
         Result<IStateStorageProvider> result = this.GetItem(name);
 
-        if (result.IsSuccess is false)
+        return result.IsSuccess switch
         {
-            return result.Cast<IStateStorageProvider>();
-        }
-        else
-        {
-            return Result<IStateStorageProvider>(result.Value!);
-        }
+            false => result.Cast<IStateStorageProvider>(),
+            _ => Result(result.Value!),
+        };
     }
 }

@@ -30,11 +30,7 @@ public static class TupleExtensions
     /// <exception cref="ErrorException">The exception containing the error.</exception>
     public static void EnsureSuccess<T>(this (T? Value, Error? Err) tuple)
     {
-        if (tuple.Err is null)
-        {
-            return;
-        }
-        else
+        if (tuple.Err is not null)
         {
             throw new ErrorException(tuple.Err, tuple.Err.Message ?? string.Empty);
         }

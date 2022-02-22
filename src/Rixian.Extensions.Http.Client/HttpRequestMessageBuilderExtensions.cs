@@ -308,7 +308,7 @@ public static class HttpRequestMessageBuilderExtensions
         }
 
         System.Diagnostics.Activity? current = System.Diagnostics.Activity.Current;
-        if (current is object)
+        if (current is not null)
         {
             if (string.IsNullOrEmpty(current!.Id) is false)
             {

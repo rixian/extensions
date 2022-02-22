@@ -43,12 +43,11 @@ public sealed record Result<T> : Result, ISuccess<T>, IFail
         [return: MaybeNull]
         get
         {
-            if (this.IsSuccess is false)
+            return this.IsSuccess switch
             {
-                throw new InvalidOperationException(Properties.Resources.InvalidCastToValueErrorMessage);
-            }
-
-            return this.value!;
+                false => throw new InvalidOperationException(Properties.Resources.InvalidCastToValueErrorMessage),
+                true => this.value!,
+            };
         }
     }
 
@@ -128,18 +127,11 @@ public sealed record Result<T> : Result, ISuccess<T>, IFail
     /// <returns>The tuple containing the result values.</returns>
     public static implicit operator (T? Value, Error? Err)(Result<T> result)
     {
-        if (result.IsSuccess)
+        return result.IsSuccess switch
         {
-            return (result.Value, default);
-        }
-        else if (result.IsSuccess is false)
-        {
-            return (default, result.Error);
-        }
-        else
-        {
-            throw new System.NotSupportedException("Result is in an impossible state.");
-        }
+            true => (result.Value, default),
+            false => (default, result.Error),
+        };
     }
 
     /// <summary>
@@ -149,27 +141,21 @@ public sealed record Result<T> : Result, ISuccess<T>, IFail
     /// <returns>The Result containing the tuple values.</returns>
     public static implicit operator Result<T?>((T? Value, Error? Err) tuple)
     {
-        if (tuple.Err is null)
+        return tuple.Err switch
         {
-            return new Result<T?>(tuple.Value);
-        }
-        else
-        {
-            return new Result<T?>(tuple.Err);
-        }
+            null => new Result<T?>(tuple.Value),
+            _ => new Result<T?>(tuple.Err),
+        };
     }
 
     /// <inheritdoc/>
     public override string ToString()
     {
-        if (this.IsSuccess)
+        return this.IsSuccess switch
         {
-            return FormatValue(typeof(T), this.value);
-        }
-        else
-        {
-            return FormatValue(typeof(Error), this.error);
-        }
+            true => FormatValue(typeof(T), this.value),
+            false => FormatValue(typeof(Error), this.error),
+        };
     }
 
     private static string FormatValue<TValue>(Type type, TValue value) => $"{type.FullName}: {value?.ToString()}";

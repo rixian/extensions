@@ -28,12 +28,11 @@ public sealed record Success<T> : Result, ISuccess<T>
     {
         get
         {
-            if (this.IsSuccess is false)
+            return this.IsSuccess switch
             {
-                throw new InvalidOperationException("InvalidCastToValueErrorMessage");
-            }
-
-            return this.value;
+                false => throw new InvalidOperationException("InvalidCastToValueErrorMessage"),
+                _ => this.value,
+            };
         }
     }
 

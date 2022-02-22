@@ -69,11 +69,7 @@ public static class ResultExtensions
     /// <exception cref="ErrorException">The exception containing the error.</exception>
     public static void EnsureSuccess(this IResult result)
     {
-        if (result.IsSuccess)
-        {
-            return;
-        }
-        else
+        if (result.IsSuccess is false)
         {
             IFail fail = result.AsFail();
             throw new ErrorException(fail.Error, fail.Error.Message ?? string.Empty);

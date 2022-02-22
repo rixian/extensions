@@ -32,14 +32,11 @@ internal class ClientCredentialTokenClientFactory : GenericFactory<ClientCredent
     {
         Result<ClientCredentialsTokenClient> result = this.GetItem(name);
 
-        if (result.IsSuccess is false)
+        return result.IsSuccess switch
         {
-            return result.Cast<ITokenClient>();
-        }
-        else
-        {
-            return Result<ITokenClient>(result.Value!);
-        }
+            false => result.Cast<ITokenClient>(),
+            _ => Result<ITokenClient>(result.Value!),
+        };
     }
 }
 

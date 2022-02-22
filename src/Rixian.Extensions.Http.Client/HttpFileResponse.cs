@@ -52,17 +52,17 @@ public class HttpFileResponse : IDisposable
     /// <summary>
     /// Gets the Content-Disposition header.
     /// </summary>
-    public ContentDisposition? ContentDispositionHeader { get; private set; }
+    public ContentDisposition? ContentDispositionHeader { get; }
 
     /// <summary>
     /// Gets the Content-Type header.
     /// </summary>
-    public ContentType? ContentTypeHeader { get; private set; }
+    public ContentType? ContentTypeHeader { get; }
 
     /// <summary>
     /// Gets the response headers.
     /// </summary>
-    public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; private set; }
+    public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; }
 
     /// <summary>
     /// Gets a value indicating whether the response contains the request data range.
@@ -75,12 +75,12 @@ public class HttpFileResponse : IDisposable
     /// <summary>
     /// Gets the response status code.
     /// </summary>
-    public HttpStatusCode StatusCode { get; private set; }
+    public HttpStatusCode StatusCode { get; }
 
     /// <summary>
     /// Gets the raw data stream.
     /// </summary>
-    public Stream Stream { get; private set; }
+    public Stream Stream { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HttpFileResponse"/> class.
@@ -109,7 +109,7 @@ public class HttpFileResponse : IDisposable
 
         Stream responseStream = response.Content is null ? Stream.Null : await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         var headers = response.Headers.ToDictionary(h => h.Key, h => h.Value);
-        if (response.Content is not null && response.Content.Headers is not null)
+        if (response.Content?.Headers is not null)
         {
             foreach (KeyValuePair<string, IEnumerable<string>> item_ in response.Content.Headers)
             {
@@ -139,15 +139,8 @@ public class HttpFileResponse : IDisposable
         {
             if (disposing)
             {
-                if (this.Stream is not null)
-                {
-                    this.Stream.Dispose();
-                }
-
-                if (this.responseMessage is not null)
-                {
-                    this.responseMessage.Dispose();
-                }
+                this.Stream?.Dispose();
+                this.responseMessage?.Dispose();
             }
 
             this.disposedValue = true;

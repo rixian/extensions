@@ -32,10 +32,7 @@ public static class CachingServiceCollectionExtensions
     /// <returns>The updated IServiceCollection instance.</returns>
     public static IServiceCollection AddManagedCaching(this IServiceCollection services, CacheManagerOptions cacheManagerOptions)
     {
-        services.Configure<CacheManagerOptions>(o =>
-        {
-            o.SerializerOptions = cacheManagerOptions?.SerializerOptions;
-        });
+        services.Configure<CacheManagerOptions>(o => o.SerializerOptions = cacheManagerOptions?.SerializerOptions);
         services.AddTransient<CacheManager>();
         services.AddTransient<ICacheProvider, CacheManager>();
 

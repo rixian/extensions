@@ -56,12 +56,11 @@ public class GenericFactory<TOption, TItem> : IFactory<TOption, TItem>
             {
                 TOption o = this.options.Get(n);
 
-                if (o is null && this.factoryOptions.Value.AllowMissingOptions is false)
+                return o switch
                 {
-                    return new MissingOptionsError(typeof(TOption), typeof(TItem), n);
-                }
-
-                return this.factoryOptions.Value.CreateDefaultItem.Invoke(this.services, o);
+                    null when this.factoryOptions.Value.AllowMissingOptions is false => new MissingOptionsError(typeof(TOption), typeof(TItem), n),
+                    _ => this.factoryOptions.Value.CreateDefaultItem.Invoke(this.services, o),
+                };
             }
         });
     }
