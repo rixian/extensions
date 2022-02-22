@@ -1,42 +1,42 @@
-﻿// Copyright (c) Rixian. All rights reserved.
+// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Extensions.AspNetCore.Api
+namespace Rixian.Extensions.AspNetCore.Api;
+
+using Rixian.Extensions.Errors;
+
+/// <summary>
+/// Configuration class for the api.
+/// </summary>
+public class ApiConfig
 {
-    using Rixian.Extensions.Errors;
+    /// <summary>
+    /// Gets or sets a value that defines the default version for the Api.
+    /// </summary>
+    public string? DefaultVersion { get; set; }
 
     /// <summary>
-    /// Configuration class for the api.
+    /// Checks if all the required configuration values are present.
     /// </summary>
-    public class ApiConfig
-    {
-        /// <summary>
-        /// Gets or sets a value that defines the default version for the Api.
-        /// </summary>
-        public string? DefaultVersion { get; set; }
-
-        /// <summary>
-        /// Checks if all the required configuration values are present.
-        /// </summary>
-        /// <returns>An optional error result or nothing.</returns>
+    /// <returns>An optional error result or nothing.</returns>
 #pragma warning disable CA1822 // Mark members as static
-        public Result CheckRequiredValues()
-#pragma warning restore CA1822 // Mark members as static
-        {
-            // Nothing is required.
-            return Result.Default;
-        }
 
-        /// <summary>
-        /// Ensures that all the required configuration values are present. Throws an <see cref="ErrorException"/> if not.
-        /// </summary>
-        public void EnsureRequiredValues()
+    public Result CheckRequiredValues()
+#pragma warning restore CA1822 // Mark members as static
+    {
+        // Nothing is required.
+        return Result.Default;
+    }
+
+    /// <summary>
+    /// Ensures that all the required configuration values are present. Throws an <see cref="ErrorException"/> if not.
+    /// </summary>
+    public void EnsureRequiredValues()
+    {
+        Result isValid = this.CheckRequiredValues();
+        if (isValid.IsSuccess is false && isValid is IFail fail)
         {
-            Result isValid = this.CheckRequiredValues();
-            if (isValid.IsSuccess == false && isValid is IFail fail)
-            {
-                throw new ErrorException(fail.Error);
-            }
+            throw new ErrorException(fail.Error);
         }
     }
 }

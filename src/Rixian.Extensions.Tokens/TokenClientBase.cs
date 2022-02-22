@@ -1,86 +1,84 @@
-﻿// Copyright (c) Rixian. All rights reserved.
+// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Extensions.Tokens
+namespace Rixian.Extensions.Tokens;
+
+using System;
+using System.Threading.Tasks;
+using Nito.AsyncEx;
+using Rixian.Extensions.Errors;
+using static Rixian.Extensions.Errors.Prelude;
+
+/// <summary>
+/// Token Client used for the Client Credentials grant type.
+/// </summary>
+public abstract class TokenClientBase : ITokenClient
 {
-    using System;
-    using System.Threading.Tasks;
-    using Nito.AsyncEx;
-    using Rixian.Extensions.Errors;
-    using static Rixian.Extensions.Errors.Prelude;
+    private readonly object gate = new object();
+    private readonly object getTokenGate = new object();
 
-    /// <summary>
-    /// Token Client used for the Client Credentials grant type.
-    /// </summary>
-    public abstract class TokenClientBase : ITokenClient
+    private DateTimeOffset expiration;
+    private AsyncLazy<Result<ITokenInfo>>? gettingTokenTask = null;
+    private ITokenInfo? token;
+
+    /// <inheritdoc/>
+    public Task<Result<ITokenInfo>> GetTokenAsync(bool forceRefresh)
     {
-        private readonly object gate = new object();
-        private readonly object getTokenGate = new object();
-
-        private ITokenInfo? token;
-        private DateTimeOffset expiration;
-
-        private AsyncLazy<Result<ITokenInfo>>? gettingTokenTask = null;
-
-        /// <inheritdoc/>
-        public Task<Result<ITokenInfo>> GetTokenAsync(bool forceRefresh)
+        lock (this.gate)
         {
-            lock (this.gate)
+            if (forceRefresh)
             {
-                if (forceRefresh)
-                {
-                    this.token = null;
-                }
+                this.token = null;
+            }
 
-                if (this.token != null && DateTimeOffset.UtcNow < this.expiration)
-                {
-                    return Task.FromResult(Result(this.token));
-                }
+            if (this.token is not null && DateTimeOffset.UtcNow < this.expiration)
+            {
+                return Task.FromResult(Result(this.token));
+            }
 
-                lock (this.getTokenGate)
+            lock (this.getTokenGate)
+            {
+                if (this.gettingTokenTask is null)
                 {
-                    if (this.gettingTokenTask == null)
+                    this.gettingTokenTask = new AsyncLazy<Result<ITokenInfo>>(async () =>
                     {
-                        this.gettingTokenTask = new AsyncLazy<Result<ITokenInfo>>(async () =>
+                        try
                         {
-                            try
+                            Result<ITokenInfo> tokenResult = await this.GetTokenCoreAsync().ConfigureAwait(false);
+                            if (tokenResult.IsSuccess)
                             {
-                                Result<ITokenInfo> tokenResult = await this.GetTokenCoreAsync().ConfigureAwait(false);
-                                if (tokenResult.IsSuccess)
+                                this.token = tokenResult.Value;
+                                this.expiration = this.token!.Expiration.AddMinutes(-5); // Give ourselves a 5 minute buffer
+                                lock (this.getTokenGate)
                                 {
-                                    this.token = tokenResult.Value;
-                                    this.expiration = this.token!.Expiration.AddMinutes(-5); // Give ourselves a 5 minute buffer
-                                    lock (this.getTokenGate)
-                                    {
-                                        this.gettingTokenTask = null;
-                                    }
+                                    this.gettingTokenTask = null;
+                                }
 
-                                    return Result(this.token!);
-                                }
-                                else
-                                {
-                                    this.token = null;
-                                    return tokenResult;
-                                }
+                                return Result(this.token!);
                             }
-                            catch
+                            else
                             {
                                 this.token = null;
-                                this.expiration = DateTimeOffset.MinValue;
-                                throw;
+                                return tokenResult;
                             }
-                        });
-                    }
-
-                    return this.gettingTokenTask.Task;
+                        }
+                        catch
+                        {
+                            this.token = null;
+                            this.expiration = DateTimeOffset.MinValue;
+                            throw;
+                        }
+                    });
                 }
+
+                return this.gettingTokenTask.Task;
             }
         }
-
-        /// <summary>
-        /// The core implementation to retreive a token.
-        /// </summary>
-        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        protected abstract Task<Result<ITokenInfo>> GetTokenCoreAsync();
     }
+
+    /// <summary>
+    /// The core implementation to retreive a token.
+    /// </summary>
+    /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+    protected abstract Task<Result<ITokenInfo>> GetTokenCoreAsync();
 }

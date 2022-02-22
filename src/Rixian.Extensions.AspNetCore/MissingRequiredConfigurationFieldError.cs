@@ -1,24 +1,23 @@
 ﻿// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Extensions.AspNetCore
-{
-    using Rixian.Extensions.Errors;
+namespace Rixian.Extensions.AspNetCore;
 
+using Rixian.Extensions.Errors;
+
+/// <summary>
+/// Error used when a configuration field is missing.
+/// </summary>
+public record MissingRequiredConfigurationFieldError : Error
+{
     /// <summary>
-    /// Error used when a configuration field is missing.
+    /// Initializes a new instance of the <see cref="MissingRequiredConfigurationFieldError"/> class.
     /// </summary>
-    public record MissingRequiredConfigurationFieldError : Error
+    /// <param name="fieldPath">The path to the field.</param>
+    public MissingRequiredConfigurationFieldError(string fieldPath)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MissingRequiredConfigurationFieldError"/> class.
-        /// </summary>
-        /// <param name="fieldPath">The path to the field.</param>
-        public MissingRequiredConfigurationFieldError(string fieldPath)
-        {
-            this.Code = "MissingRequiredConfigurationField";
-            this.Message = Properties.Resources.MissingRequiredConfigurationFieldErrorMessage;
-            this.Target = fieldPath;
-        }
+        this.Code = "MissingRequiredConfigurationField";
+        this.Message = Properties.Resources.MissingRequiredConfigurationFieldErrorMessage;
+        this.Target = fieldPath;
     }
 }

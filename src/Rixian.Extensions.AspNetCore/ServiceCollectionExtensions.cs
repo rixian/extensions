@@ -1,89 +1,88 @@
-﻿// Copyright (c) Rixian. All rights reserved.
+// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
+
+/// <summary>
+/// Basic extensions for IServiceCollection for AspNet Core.
+/// </summary>
+public static class ServiceCollectionExtensions
 {
-    using System.Text.Json;
-    using System.Text.Json.Serialization;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.HttpOverrides;
-    using Microsoft.AspNetCore.Mvc;
+    /// <summary>
+    /// Adds the Authorization services to the DI container.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection AddAuthorizationServices(this IServiceCollection services)
+    {
+        services.AddAuthorization();
+
+        return services;
+    }
 
     /// <summary>
-    /// Basic extensions for IServiceCollection for AspNet Core.
+    /// Adds the CORS to the DI container.
     /// </summary>
-    public static class ServiceCollectionExtensions
+    /// <param name="services">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection AddCorsServices(this IServiceCollection services)
     {
-        /// <summary>
-        /// Configures headers used with proxying and load balancers.
-        /// </summary>
-        /// <param name="services">The IServiceCollection.</param>
-        /// <returns>The updated IServiceCollection.</returns>
-        public static IServiceCollection ConfigureForwardedHeadersOptions(this IServiceCollection services)
+        services.AddCors(options =>
         {
-            services.Configure<ForwardedHeadersOptions>(options =>
+            options.AddPolicy(Rixian.Extensions.AspNetCore.Constants.CorsAllowAllOrigins, builder =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.All;
+                builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
 
-                // See: https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0#forward-the-scheme-for-linux-and-non-iis-reverse-proxies
-                // Only loopback proxies are allowed by default.
-                // Clear that restriction because forwarders are enabled by explicit configuration.
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
+        return services;
+    }
+
+    /// <summary>
+    /// Adds the Mvc and Json services to the DI container.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection AddMvcServices(this IServiceCollection services)
+    {
+        services
+            .AddControllers()
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            .AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-            return services;
-        }
+        return services;
+    }
 
-        /// <summary>
-        /// Adds the Mvc and Json services to the DI container.
-        /// </summary>
-        /// <param name="services">The service collection.</param>
-        /// <returns>The updated service collection.</returns>
-        public static IServiceCollection AddMvcServices(this IServiceCollection services)
+    /// <summary>
+    /// Configures headers used with proxying and load balancers.
+    /// </summary>
+    /// <param name="services">The IServiceCollection.</param>
+    /// <returns>The updated IServiceCollection.</returns>
+    public static IServiceCollection ConfigureForwardedHeadersOptions(this IServiceCollection services)
+    {
+        services.Configure<ForwardedHeadersOptions>(options =>
         {
-            services
-                .AddControllers()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddJsonOptions(o =>
-                {
-                    o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                });
+            options.ForwardedHeaders = ForwardedHeaders.All;
 
-            return services;
-        }
+            // See: https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0#forward-the-scheme-for-linux-and-non-iis-reverse-proxies
+            // Only loopback proxies are allowed by default.
+            // Clear that restriction because forwarders are enabled by explicit configuration.
+            options.KnownNetworks.Clear();
+            options.KnownProxies.Clear();
+        });
 
-        /// <summary>
-        /// Adds the CORS to the DI container.
-        /// </summary>
-        /// <param name="services">The service collection.</param>
-        /// <returns>The updated service collection.</returns>
-        public static IServiceCollection AddCorsServices(this IServiceCollection services)
-        {
-            services.AddCors(options =>
-            {
-                options.AddPolicy(Rixian.Extensions.AspNetCore.Constants.CorsAllowAllOrigins, builder =>
-                {
-                    builder.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            });
-
-            return services;
-        }
-
-        /// <summary>
-        /// Adds the Authorization services to the DI container.
-        /// </summary>
-        /// <param name="services">The service collection.</param>
-        /// <returns>The updated service collection.</returns>
-        public static IServiceCollection AddAuthorizationServices(this IServiceCollection services)
-        {
-            services.AddAuthorization();
-
-            return services;
-        }
+        return services;
     }
 }

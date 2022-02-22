@@ -1,4 +1,4 @@
-﻿/***************************************************************************************
+/***************************************************************************************
 *    Title: AsyncLazy
 *    Author: Steven Clearly
 *    Date downloaded: 2019-09-10
@@ -89,7 +89,7 @@ namespace Nito.AsyncEx
         /// <param name="flags">Flags to influence async lazy semantics.</param>
         public AsyncLazy(Func<Task<T>> factory, AsyncLazyFlags flags = AsyncLazyFlags.None)
         {
-            if (factory == null)
+            if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
             _factory = factory;
             if ((flags & AsyncLazyFlags.RetryOnFailure) == AsyncLazyFlags.RetryOnFailure)

@@ -1,43 +1,41 @@
-﻿// Copyright (c) Rixian. All rights reserved.
+// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Extensions.Errors
+namespace Rixian.Extensions.Errors;
+
+using System;
+
+/// <summary>
+/// Provides helper methods for working with Errors and Results.
+/// </summary>
+public static partial class Prelude
 {
-    using System;
+    /// <summary>
+    /// Requires a non-empty GUID.
+    /// </summary>
+    /// <param name="argument">The GUID to validate.</param>
+    /// <returns>A Result with an error if the argument is empty.</returns>
+    public static Result RequireGuid(Guid? argument)
+    {
+        return argument.HasValue switch
+        {
+            false => NullValueDisallowedError().ToResult(),
+            true => RequireGuid(argument.Value),
+        };
+    }
 
     /// <summary>
-    /// Provides helper methods for working with Errors and Results.
+    /// Requires a non-empty GUID.
     /// </summary>
-    public static partial class Prelude
+    /// <param name="argument">The GUID to validate.</param>
+    /// <returns>A Result with an error if the argument is empty.</returns>
+    public static Result RequireGuid(Guid argument)
     {
-        /// <summary>
-        /// Requires a non-empty GUID.
-        /// </summary>
-        /// <param name="argument">The GUID to validate.</param>
-        /// <returns>A Result with an error if the argument is empty.</returns>
-        public static Result RequireGuid(Guid? argument)
+        if (argument == Guid.Empty)
         {
-            if (argument.HasValue == false)
-            {
-                return NullValueDisallowedError().ToResult();
-            }
-
-            return RequireGuid(argument.Value);
+            return NullValueDisallowedError().ToResult();
         }
 
-        /// <summary>
-        /// Requires a non-empty GUID.
-        /// </summary>
-        /// <param name="argument">The GUID to validate.</param>
-        /// <returns>A Result with an error if the argument is empty.</returns>
-        public static Result RequireGuid(Guid argument)
-        {
-            if (argument == Guid.Empty)
-            {
-                return NullValueDisallowedError().ToResult();
-            }
-
-            return DefaultResult;
-        }
+        return DefaultResult;
     }
 }

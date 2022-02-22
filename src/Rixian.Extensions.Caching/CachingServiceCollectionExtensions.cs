@@ -1,45 +1,44 @@
-﻿// Copyright (c) Rixian. All rights reserved.
+// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Extensions.DependencyInjection
+namespace Rixian.Extensions.DependencyInjection;
+
+using Microsoft.Extensions.DependencyInjection;
+using Rixian.Extensions.ApplicationServices.Abstractions;
+using Rixian.Extensions.Caching;
+
+/// <summary>
+/// Extensions for the IServiceCollection interface to register caching dependencies.
+/// </summary>
+public static class CachingServiceCollectionExtensions
 {
-    using Microsoft.Extensions.DependencyInjection;
-    using Rixian.Extensions.ApplicationServices.Abstractions;
-    using Rixian.Extensions.Caching;
+    /// <summary>
+    /// Registers dependencies with the IServiceCollection instance.
+    /// </summary>
+    /// <param name="services">The IServiceCollection instance to use.</param>
+    /// <returns>The updated IServiceCollection instance.</returns>
+    public static IServiceCollection AddManagedCaching(this IServiceCollection services)
+    {
+        services.AddManagedCaching(new CacheManagerOptions());
+
+        return services;
+    }
 
     /// <summary>
-    /// Extensions for the IServiceCollection interface to register caching dependencies.
+    /// Registers dependencies with the IServiceCollection instance.
     /// </summary>
-    public static class CachingServiceCollectionExtensions
+    /// <param name="services">The IServiceCollection instance to use.</param>
+    /// <param name="cacheManagerOptions">Options for configuring the cache manager.</param>
+    /// <returns>The updated IServiceCollection instance.</returns>
+    public static IServiceCollection AddManagedCaching(this IServiceCollection services, CacheManagerOptions cacheManagerOptions)
     {
-        /// <summary>
-        /// Registers dependencies with the IServiceCollection instance.
-        /// </summary>
-        /// <param name="services">The IServiceCollection instance to use.</param>
-        /// <returns>The updated IServiceCollection instance.</returns>
-        public static IServiceCollection AddManagedCaching(this IServiceCollection services)
+        services.Configure<CacheManagerOptions>(o =>
         {
-            services.AddManagedCaching(new CacheManagerOptions());
+            o.SerializerOptions = cacheManagerOptions?.SerializerOptions;
+        });
+        services.AddTransient<CacheManager>();
+        services.AddTransient<ICacheProvider, CacheManager>();
 
-            return services;
-        }
-
-        /// <summary>
-        /// Registers dependencies with the IServiceCollection instance.
-        /// </summary>
-        /// <param name="services">The IServiceCollection instance to use.</param>
-        /// <param name="cacheManagerOptions">Options for configuring the cache manager.</param>
-        /// <returns>The updated IServiceCollection instance.</returns>
-        public static IServiceCollection AddManagedCaching(this IServiceCollection services, CacheManagerOptions cacheManagerOptions)
-        {
-            services.Configure<CacheManagerOptions>(o =>
-            {
-                o.SerializerOptions = cacheManagerOptions?.SerializerOptions;
-            });
-            services.AddTransient<CacheManager>();
-            services.AddTransient<ICacheProvider, CacheManager>();
-
-            return services;
-        }
+        return services;
     }
 }

@@ -1,22 +1,21 @@
 ﻿// Copyright (c) Rixian. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-namespace Rixian.Extensions.AspNetCore
-{
-    using Rixian.Extensions.Errors;
+namespace Rixian.Extensions.AspNetCore;
 
+using Rixian.Extensions.Errors;
+
+/// <summary>
+/// Error used when configuration is invalid.
+/// </summary>
+public record InvalidConfigurationError : Error
+{
     /// <summary>
-    /// Error used when configuration is invalid.
+    /// Initializes a new instance of the <see cref="InvalidConfigurationError"/> class.
     /// </summary>
-    public record InvalidConfigurationError : Error
+    public InvalidConfigurationError()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InvalidConfigurationError"/> class.
-        /// </summary>
-        public InvalidConfigurationError()
-        {
-            this.Code = "InvalidConfiguration";
-            this.Message = Properties.Resources.InvalidConfigurationErrorMessage;
-        }
+        this.Code = "InvalidConfiguration";
+        this.Message = Properties.Resources.InvalidConfigurationErrorMessage;
     }
 }
