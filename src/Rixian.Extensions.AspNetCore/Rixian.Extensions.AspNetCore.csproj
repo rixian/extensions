@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <Description>Extensions for Asp.Net Core to address cross-cutting concerns for web applications.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>

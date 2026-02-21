@@ -1,4 +1,6 @@
 <Project>
+  <Import Project="strongvalidation.core.props" Condition="Exists('strongvalidation.core.props')" />
+
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
@@ -34,6 +36,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageIcon>icon.png</PackageIcon>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">

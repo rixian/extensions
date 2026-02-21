@@ -7,7 +7,6 @@ namespace Microsoft.Extensions.DependencyInjection
     using System.Text.Json.Serialization;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.HttpOverrides;
-    using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
     /// Basic extensions for IServiceCollection for AspNet Core.
@@ -28,7 +27,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 // See: https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0#forward-the-scheme-for-linux-and-non-iis-reverse-proxies
                 // Only loopback proxies are allowed by default.
                 // Clear that restriction because forwarders are enabled by explicit configuration.
+#if NET10_0_OR_GREATER
+                options.KnownIPNetworks.Clear();
+#else
                 options.KnownNetworks.Clear();
+#endif
                 options.KnownProxies.Clear();
             });
 
@@ -44,7 +47,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services
                 .AddControllers()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddJsonOptions(o =>
                 {
                     o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;

@@ -93,7 +93,13 @@ namespace Rixian.Extensions.AspNetCore.DataProtection
                 throw new System.ArgumentNullException(nameof(configuration));
             }
 
-            return services.AddFullDataProtection(configuration.Get<DataProtectionConfig>());
+            DataProtectionConfig? options = configuration.Get<DataProtectionConfig>();
+            if (options is null)
+            {
+                throw new System.ArgumentOutOfRangeException(nameof(configuration), Properties.Resources.MissingValueErrorMessage);
+            }
+
+            return services.AddFullDataProtection(options);
         }
 
         /// <summary>

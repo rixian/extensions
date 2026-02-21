@@ -1,3 +1,21 @@
+# Rixian Extensions
+
+## Repository Status
+
+- Active development happens only in this repository: `rixian/extensions`.
+- Legacy split repositories are migration sources only and will be archived as read-only.
+- Package IDs remain unchanged; new releases publish from this repository.
+
+Primary planning and migration docs:
+
+- `MIGRATION_TRACKER.md`
+- `docs/consolidation-execution-plan.md`
+- `docs/modernization-checklist.md`
+- `docs/templates/archive-readme-notice.md`
+- `docs/templates/ARCHIVED.md`
+- `docs/compatibility-decisions.md`
+- `docs/spec-traceability.md`
+
 # Errors and Results
 
 [![NuGet package](https://img.shields.io/nuget/v/Rixian.Extensions.Errors.svg)](https://nuget.org/packages/Rixian.Extensions.Errors)
@@ -172,12 +190,11 @@ The `HttpProblem` class and its sibling `HttpProblemError` are used for working 
 **This library provides extension methods for setting up an HttpClient.**
 
 [![NuGet package](https://img.shields.io/nuget/v/Rixian.Extensions.Http.svg)](https://nuget.org/packages/Rixian.Extensions.Http)
-[![codecov](https://codecov.io/gh/rixian/extensions-http/branch/master/graph/badge.svg)](https://codecov.io/gh/rixian/extensions-http)
 
 ## Features
 
 - Configure Basic HttlClient properties, such as SSL Protocols.
-- Configure an [ITokenClient](https://github.com/rixian/extensions-tokens) as the source of the Authorization header.
+- Configure an `ITokenClient` as the source of the Authorization header.
 - Configure the Authorization header with a static Bearer token value.
 - Configure any header with a static value.
 

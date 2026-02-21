@@ -121,6 +121,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The same IHttpClientBuilder.</returns>
         public static IHttpClientBuilder UseSslProtocols(this IHttpClientBuilder httpClientBuilder, SslProtocols sslProtocols)
         {
+#pragma warning disable CS0618
             return httpClientBuilder.ConfigureHttpMessageHandlerBuilder(b =>
             {
                 if (b?.PrimaryHandler is HttpClientHandler httpClientHandler)
@@ -128,6 +129,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     httpClientHandler.SslProtocols = sslProtocols;
                 }
             });
+#pragma warning restore CS0618
         }
 
         /// <summary>
@@ -138,6 +140,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The same IHttpClientBuilder.</returns>
         public static IHttpClientBuilder UseMaxRequestContentBufferSize(this IHttpClientBuilder httpClientBuilder, long maxRequestContentBufferSize)
         {
+#pragma warning disable CS0618
             return httpClientBuilder.ConfigureHttpMessageHandlerBuilder(b =>
             {
                 if (b?.PrimaryHandler is HttpClientHandler httpClientHandler)
@@ -145,6 +148,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     httpClientHandler.MaxRequestContentBufferSize = maxRequestContentBufferSize;
                 }
             });
+#pragma warning restore CS0618
         }
 
         /// <summary>

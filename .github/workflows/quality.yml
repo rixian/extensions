@@ -1,0 +1,174 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - release/*
+
+jobs:
+  quality:
+    runs-on: windows-latest
+    outputs:
+      format_status: ${{ steps.gates.outputs.format_status }}
+      build_status: ${{ steps.gates.outputs.build_status }}
+      test_status: ${{ steps.gates.outputs.test_status }}
+      spec_status: ${{ steps.gates.outputs.spec_status }}
+      tests_passed: ${{ steps.metrics.outputs.tests_passed }}
+      tests_failed: ${{ steps.metrics.outputs.tests_failed }}
+      tests_skipped: ${{ steps.metrics.outputs.tests_skipped }}
+      coverage_line: ${{ steps.metrics.outputs.coverage_line }}
+      coverage_branch: ${{ steps.metrics.outputs.coverage_branch }}
+      coverage_line_gate: ${{ steps.metrics.outputs.coverage_line_gate }}
+      coverage_branch_gate: ${{ steps.metrics.outputs.coverage_branch_gate }}
+      coverage_line_status: ${{ steps.gates.outputs.coverage_line_status }}
+      coverage_branch_status: ${{ steps.gates.outputs.coverage_branch_status }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Rixian.Extensions.sln --nologo
+
+      - name: Spec verification
+        id: spec
+        continue-on-error: true
+        shell: pwsh
+        run: ./scripts/quality/verify-type-specs.ps1 -Root .
+
+      - name: Format verification
+        id: format
+        continue-on-error: true
+        run: dotnet format Rixian.Extensions.sln --verify-no-changes --no-restore
+
+      - name: Build (strict)
+        id: build
+        continue-on-error: true
+        run: dotnet build Rixian.Extensions.sln --no-restore --configuration Release -warnaserror -p:ContinuousIntegrationBuild=true --nologo
+
+      - name: Test with coverage
+        id: test
+        continue-on-error: true
+        run: dotnet test Rixian.Extensions.sln --no-restore --configuration Release --logger "trx;LogFileName=test-results.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/Coverage/ --nologo
+
+      - name: Collect metrics
+        id: metrics
+        if: always()
+        shell: pwsh
+        run: |
+          $lineGate = 70
+          $branchGate = 60
+
+          $trxFiles = Get-ChildItem -Recurse -Filter *.trx
+          $passed = 0; $failed = 0; $skipped = 0
+          foreach ($trx in $trxFiles) {
+            [xml]$x = Get-Content $trx.FullName
+            $c = $x.TestRun.ResultSummary.Counters
+            if ($null -ne $c) {
+              $passed += [int]$c.passed
+              $failed += [int]$c.failed
+              $skipped += [int]$c.notExecuted
+            }
+          }
+
+          $coverageFiles = Get-ChildItem -Recurse -Filter coverage.cobertura.xml
+          $linesValid = 0; $linesCovered = 0; $branchesValid = 0; $branchesCovered = 0
+          foreach ($f in $coverageFiles) {
+            [xml]$cov = Get-Content $f.FullName
+            $linesValid += [double]$cov.coverage.'lines-valid'
+            $linesCovered += [double]$cov.coverage.'lines-covered'
+            $branchesValid += [double]$cov.coverage.'branches-valid'
+            $branchesCovered += [double]$cov.coverage.'branches-covered'
+          }
+
+          $linePct = if ($linesValid -gt 0) { [math]::Round(($linesCovered / $linesValid) * 100, 2) } else { 0 }
+          $branchPct = if ($branchesValid -gt 0) { [math]::Round(($branchesCovered / $branchesValid) * 100, 2) } else { 0 }
+
+          "tests_passed=$passed" >> $env:GITHUB_OUTPUT
+          "tests_failed=$failed" >> $env:GITHUB_OUTPUT
+          "tests_skipped=$skipped" >> $env:GITHUB_OUTPUT
+          "coverage_line=$linePct" >> $env:GITHUB_OUTPUT
+          "coverage_branch=$branchPct" >> $env:GITHUB_OUTPUT
+          "coverage_line_gate=$lineGate" >> $env:GITHUB_OUTPUT
+          "coverage_branch_gate=$branchGate" >> $env:GITHUB_OUTPUT
+
+      - name: Evaluate gates
+        id: gates
+        if: always()
+        shell: pwsh
+        run: |
+          $specOk = '${{ steps.spec.outcome }}' -eq 'success'
+          $formatOk = '${{ steps.format.outcome }}' -eq 'success'
+          $buildOk = '${{ steps.build.outcome }}' -eq 'success'
+          $testOk = '${{ steps.test.outcome }}' -eq 'success'
+
+          "spec_status=$([string]$specOk)" >> $env:GITHUB_OUTPUT
+          "format_status=$([string]$formatOk)" >> $env:GITHUB_OUTPUT
+          "build_status=$([string]$buildOk)" >> $env:GITHUB_OUTPUT
+          "test_status=$([string]$testOk)" >> $env:GITHUB_OUTPUT
+
+          $linePct = [double]'${{ steps.metrics.outputs.coverage_line }}'
+          $branchPct = [double]'${{ steps.metrics.outputs.coverage_branch }}'
+          $lineGate = [double]'${{ steps.metrics.outputs.coverage_line_gate }}'
+          $branchGate = [double]'${{ steps.metrics.outputs.coverage_branch_gate }}'
+          $lineOk = $linePct -ge $lineGate
+          $branchOk = $branchPct -ge $branchGate
+
+          "coverage_line_status=$([string]$lineOk)" >> $env:GITHUB_OUTPUT
+          "coverage_branch_status=$([string]$branchOk)" >> $env:GITHUB_OUTPUT
+
+          if (-not $specOk -or -not $formatOk -or -not $buildOk -or -not $testOk -or -not $lineOk -or -not $branchOk) {
+            Write-Error "One or more quality gates failed."
+            exit 1
+          }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-artifacts
+          path: |
+            **/*.trx
+            **/coverage.cobertura.xml
+
+  report:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [quality]
+    steps:
+      - name: Write summary
+        run: |
+          overall="✅ Passed"
+          [ "${{ needs.quality.result }}" != "success" ] && overall="❌ Failed"
+
+          spec_status=$([ "${{ needs.quality.outputs.spec_status }}" = "True" ] && echo "✅" || echo "❌")
+          format_status=$([ "${{ needs.quality.outputs.format_status }}" = "True" ] && echo "✅" || echo "❌")
+          build_status=$([ "${{ needs.quality.outputs.build_status }}" = "True" ] && echo "✅" || echo "❌")
+          test_status=$([ "${{ needs.quality.outputs.test_status }}" = "True" ] && echo "✅" || echo "❌")
+          line_status=$([ "${{ needs.quality.outputs.coverage_line_status }}" = "True" ] && echo "✅" || echo "❌")
+          branch_status=$([ "${{ needs.quality.outputs.coverage_branch_status }}" = "True" ] && echo "✅" || echo "❌")
+
+          {
+            echo "# CI Quality Summary"
+            echo ""
+            echo "**Result:** $overall"
+            echo ""
+            echo "## Executive Gates"
+            echo "| Gate | Status | Metric | Threshold | Notes |"
+            echo "|---|---|---:|---:|---|"
+            echo "| 🧾 Spec Verification | $spec_status | mapped scenarios | >= 10 | scripts/quality/verify-type-specs.ps1 |"
+            echo "| 🧹 Format | $format_status | dotnet format | no changes | enforced |"
+            echo "| 🏗️ Build | $build_status | warn-as-error | strict | no allowlist exceptions |"
+            echo "| 🧪 Tests | $test_status | ${{ needs.quality.outputs.tests_passed }} pass / ${{ needs.quality.outputs.tests_failed }} fail / ${{ needs.quality.outputs.tests_skipped }} skip | 0 fail | consolidated suite |"
+            echo "| 📊 Coverage (Line) | $line_status | ${{ needs.quality.outputs.coverage_line }}% | >= ${{ needs.quality.outputs.coverage_line_gate }}% | from Cobertura |"
+            echo "| 📊 Coverage (Branch) | $branch_status | ${{ needs.quality.outputs.coverage_branch }}% | >= ${{ needs.quality.outputs.coverage_branch_gate }}% | from Cobertura |"
+            echo ""
+            echo "## Artifacts"
+            echo "- quality-artifacts"
+          } >> "$GITHUB_STEP_SUMMARY"

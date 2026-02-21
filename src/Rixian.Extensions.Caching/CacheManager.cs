@@ -125,7 +125,7 @@ namespace Rixian.Extensions.Caching
             using Activity? activity = InternalUtil.ActivitySource.StartActivity("cache:get");
             activity?.AddTag("key", key);
 
-            if (this.memoryCache.TryGetValue<T>(key, out T t))
+            if (this.memoryCache.TryGetValue<T>(key, out T? t) && t is not null)
             {
                 activity?.AddEvent(new ActivityEvent("cache:got_from_memory"));
                 return t;
